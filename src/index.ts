@@ -7,10 +7,22 @@ import {validationErrorHandler} from './middlewares/validationErrorHandler';
 import {unauthorizedErrorHandler} from './middlewares/unauthorizedErrorHandler';
 import {pageNotFound} from './controllers/pageNotFound';
 import helloRouter from './routes/hello';
+import {db, postgresClient} from './database/db';
+import {migrate} from 'drizzle-orm/node-postgres/migrator';
 
 require('express-async-errors');
 
 async function main() {
+  // connect client
+  await postgresClient.connect();
+
+  await migrate(db, {
+    migrationsFolder: 'drizzle',
+  });
+
+  console.log('Migration success');
+
+  // migrate db
   const app = express();
   const port: number =
     process.env.PORT === undefined ? 8080 : parseInt(process.env.PORT);
@@ -49,7 +61,7 @@ async function main() {
   app.use(errorHandler);
 
   const server = app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`Listwibuku rest service listening on port ${port}`);
   });
 
   process.on('SIGINT', () => {
