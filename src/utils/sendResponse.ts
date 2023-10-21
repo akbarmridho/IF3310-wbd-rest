@@ -25,7 +25,30 @@ export const sendBadRequest = (
   }
 };
 
-export const sendCreated = (payload: never, response: Response): void => {
+export const sendServerError = (
+  payload: ValidationError | FieldError | string,
+  response: Response
+): void => {
+  response.status(StatusCodes.INTERNAL_SERVER_ERROR);
+  if (typeof payload === 'string') {
+    response.json({
+      error: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
+      message: payload,
+    });
+  } else if (Array.isArray(payload)) {
+    response.json({
+      error: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
+      messages: payload,
+    });
+  } else {
+    response.json({
+      error: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
+      messages: [payload],
+    });
+  }
+};
+
+export const sendCreated = (payload: any, response: Response): void => {
   response.status(StatusCodes.CREATED).json({
     status: getReasonPhrase(StatusCodes.CREATED),
     data: payload,
@@ -33,9 +56,9 @@ export const sendCreated = (payload: never, response: Response): void => {
 };
 
 export const sendOkWithPayload = (
-  payload: never,
+  payload: any,
   response: Response,
-  meta?: never
+  meta?: any
 ): void => {
   response.status(StatusCodes.OK).json({
     status: getReasonPhrase(StatusCodes.OK),
