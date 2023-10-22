@@ -1,5 +1,6 @@
 import {drizzle} from 'drizzle-orm/node-postgres';
 import {Client} from 'pg';
+import * as schema from './schema';
 
 export const postgresClient = new Client({
   host: process.env.DB_HOST,
@@ -9,4 +10,4 @@ export const postgresClient = new Client({
   database: process.env.DB_NAME,
 });
 
-export const db = drizzle(postgresClient);
+export const db = drizzle(postgresClient, {schema});

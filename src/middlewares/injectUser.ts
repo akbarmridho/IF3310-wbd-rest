@@ -1,30 +1,40 @@
 import {type NextFunction, type Response} from 'express';
 import {type AuthenticatedRequest} from '../types/auth';
-// import {UnauthorizedError} from 'express-jwt';
+import {db} from '../database/db';
+import {eq} from 'drizzle-orm';
+import {users} from '../database/schema';
+import {UnauthorizedError} from 'express-jwt';
 
 export const injectUser = async (
   request: AuthenticatedRequest,
   response: Response,
   next: NextFunction
 ): Promise<void> => {
-  // todo create inject user middleware
-  // const user = await client.user.findUnique({
-  //   where: {
-  //     id: request.auth?.id,
-  //   },
-  // });
+  const auth = request.auth;
 
-  // if (user === null) {
-  //   throw new UnauthorizedError(
-  //     'revoked_token',
-  //     new Error('UserNotFoundError')
-  //   );
-  // }
+  if (!auth) {
+    throw new Error('Missing auth in jwt.');
+  }
 
-  // request.user = {
-  //   ...user,
-  //   assignedPools: user.assignedPools.map(each => each.pool.id),
-  // };
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, auth.id),
+    columns: {
+      id: true,
+      username: true,
+      name: true,
+    },
+  });
+
+  if (!user) {
+    throw new UnauthorizedError(
+      'revoked_token',
+      new Error('UserNotFoundError')
+    );
+  }
+
+  request.user = {
+    ...user,
+  };
 
   next();
 };
