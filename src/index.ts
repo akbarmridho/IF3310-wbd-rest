@@ -6,8 +6,7 @@ import {errorHandler} from './middlewares/errorHandler';
 import {validationErrorHandler} from './middlewares/validationErrorHandler';
 import {unauthorizedErrorHandler} from './middlewares/unauthorizedErrorHandler';
 import {pageNotFound} from './controllers/pageNotFound';
-import helloRouter from './routes/hello';
-import streamRouter from './routes/stream';
+import animeRouter from './routes/anime';
 import uploaderRouter from './routes/uploader';
 import {db, postgresClient} from './database/db';
 import {migrate} from 'drizzle-orm/node-postgres/migrator';
@@ -52,8 +51,8 @@ async function main() {
     res.send('Hello World!');
   });
 
-  app.use('/', helloRouter);
-  app.use('/', streamRouter);
+  app.use('/anime', animeRouter);
+  app.use('/anime/:id/episodes');
   app.use('/', uploaderRouter);
 
   // not found handler

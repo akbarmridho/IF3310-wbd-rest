@@ -2,6 +2,7 @@ import {
   integer,
   pgEnum,
   pgTable,
+  primaryKey,
   serial,
   smallint,
   text,
@@ -51,13 +52,18 @@ const animeRelations = relations(anime, ({many}) => ({
   episodes: many(episodes),
 }));
 
-export const episodes = pgTable('episodes', {
-  id: serial('id'),
-  animeId: integer('anime_id').notNull(),
-  title: varchar('title', {length: 255}).notNull(),
-  episodeNumber: smallint('episodeNumber').notNull(),
-  filename: varchar('filename', {length: 255}).notNull(),
-});
+export const episodes = pgTable(
+  'episodes',
+  {
+    animeId: integer('anime_id').notNull(),
+    title: varchar('title', {length: 255}).notNull(),
+    episodeNumber: smallint('episodeNumber').notNull(),
+    filename: varchar('filename', {length: 255}).notNull(),
+  },
+  episodes => ({
+    pk: primaryKey(episodes.animeId, episodes.episodeNumber),
+  })
+);
 
 export const episodesRelations = relations(episodes, ({one}) => ({
   anime: one(anime, {

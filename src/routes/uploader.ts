@@ -7,6 +7,6 @@ const upload = multer({storage: storage});
 
 const router = Router();
 
-router.post('upload', upload.single('file'), handleUpload);
+router.post('file', upload.single('file'), handleUpload);
 
 export default router;
