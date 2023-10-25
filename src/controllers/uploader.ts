@@ -7,6 +7,8 @@ import {
 import fs from 'fs';
 import {mergeChunks} from '../utils/file';
 
+// todo
+// generate thumbnail pas beres upload episode
 export const handleUpload = async (request: Request, response: Response) => {
   const chunk = request.file;
 

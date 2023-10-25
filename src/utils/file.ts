@@ -30,3 +30,9 @@ export const mergeChunks = async (filename: string, totalChunks: number) => {
 
   return randomizedFilename;
 };
+
+export const deleteEpisodeFile = async (filename: string) => {
+  await fs.promises.unlink(`storage/${filename}`);
+  // todo
+  // also delete thumbnail here if exist
+};
