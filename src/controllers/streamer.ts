@@ -26,6 +26,9 @@ export const stream = (request: Request, response: Response) => {
   // todo
   // call soap and check for token validity
 
+  // todo
+  // tambah viewer
+
   const videoPath = `storage/${filename}`;
   const videoSize = fs.statSync(videoPath).size;
   const CHUNK_SIZE = 10 ** 6;

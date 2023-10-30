@@ -1,9 +1,9 @@
 import {sendOkWithMessage} from '../utils/sendResponse';
 import {Request, Response} from 'express';
 
-export const sayHello = async (
+export async function sayHello(
   request: Request,
   response: Response
-): Promise<void> => {
+): Promise<void> {
   sendOkWithMessage('Hello world!', response);
-};
+}

@@ -48,7 +48,7 @@ export const anime = pgTable(
   })
 );
 
-const animeRelations = relations(anime, ({many}) => ({
+export const animeRelations = relations(anime, ({many}) => ({
   episodes: many(episodes),
 }));
 

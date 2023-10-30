@@ -17,17 +17,16 @@ async function main() {
   // connect client
   await postgresClient.connect();
 
+  // migrate db
   await migrate(db, {
     migrationsFolder: 'drizzle',
   });
 
-  console.log('Migration success');
-
-  // migrate db
   const app = express();
   const port: number =
-    process.env.PORT === undefined ? 8080 : parseInt(process.env.PORT);
+    process.env.PORT === undefined ? 3000 : parseInt(process.env.PORT);
 
+  app.disable('x-powered-by');
   app.use(helmet());
   app.use(express.json());
   app.use(express.urlencoded({extended: true}));
@@ -64,7 +63,7 @@ async function main() {
   app.use(errorHandler);
 
   const server = app.listen(port, () => {
-    console.log(`Listwibuku rest service listening on port ${port}`);
+    console.log(`Wibu Watch rest service listening on port ${port}`);
   });
 
   process.on('SIGINT', () => {
