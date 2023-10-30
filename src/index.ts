@@ -7,6 +7,7 @@ import {validationErrorHandler} from './middlewares/validationErrorHandler';
 import {unauthorizedErrorHandler} from './middlewares/unauthorizedErrorHandler';
 import {pageNotFound} from './controllers/pageNotFound';
 import animeRouter from './routes/anime';
+import episodeRouter from './routes/episode';
 import uploaderRouter from './routes/uploader';
 import {db, postgresClient} from './database/db';
 import {migrate} from 'drizzle-orm/node-postgres/migrator';
@@ -51,7 +52,7 @@ async function main() {
   });
 
   app.use('/anime', animeRouter);
-  app.use('/anime/:id/episodes');
+  app.use('/anime/:id/episodes', episodeRouter);
   app.use('/', uploaderRouter);
 
   // not found handler
