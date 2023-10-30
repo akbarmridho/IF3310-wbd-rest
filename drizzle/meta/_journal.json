@@ -15,6 +15,13 @@
       "when": 1697982594575,
       "tag": "0001_fast_mindworm",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1698676250245,
+      "tag": "0002_lucky_sway",
+      "breakpoints": true
     }
   ]
 }

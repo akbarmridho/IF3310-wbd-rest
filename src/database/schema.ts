@@ -6,6 +6,7 @@ import {
   serial,
   smallint,
   text,
+  timestamp,
   unique,
   varchar,
 } from 'drizzle-orm/pg-core';
@@ -18,6 +19,7 @@ export const users = pgTable(
     username: varchar('username', {length: 255}).notNull(),
     name: varchar('name', {length: 255}).notNull(),
     password: varchar('password', {length: 255}).notNull(),
+    createdAt: timestamp('created_at', {withTimezone: true}).defaultNow(),
   },
   users => ({
     usernameUniqueIdx: unique('username_unique_idx').on(users.username),
@@ -40,6 +42,7 @@ export const anime = pgTable(
     totalEpisodes: smallint('totalEpisodes'),
     airedEpisodes: smallint('airedEpisodes'),
     broadcastInformation: text('broadcast_information'),
+    createdAt: timestamp('created_at', {withTimezone: true}).defaultNow(),
   },
   anime => ({
     globalIdentifierIdx: unique('global_identifier_idx').on(
@@ -59,6 +62,7 @@ export const episodes = pgTable(
     title: varchar('title', {length: 255}).notNull(),
     episodeNumber: smallint('episodeNumber').notNull(),
     filename: varchar('filename', {length: 255}).notNull(),
+    createdAt: timestamp('created_at', {withTimezone: true}).defaultNow(),
   },
   episodes => ({
     pk: primaryKey(episodes.animeId, episodes.episodeNumber),
