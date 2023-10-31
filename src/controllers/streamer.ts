@@ -1,8 +1,15 @@
 import {Request, Response} from 'express';
 import fs from 'fs';
-import {sendBadRequest} from '../utils/sendResponse';
+import {viewerService} from '../services/ViewerService';
+import {Episode} from '../database/schema';
+import {episodeService} from '../services/EpisodeService';
+import {StatusCodes} from 'http-status-codes';
+import path from 'path';
 
-export const stream = (request: Request, response: Response) => {
+export async function stream(
+  request: Request<{id: string; episode_number: string}>,
+  response: Response
+) {
   const range = request.headers.range;
 
   if (!range) {
@@ -10,26 +17,23 @@ export const stream = (request: Request, response: Response) => {
     return;
   }
 
-  const filename = request.query.filename;
-  const token = request.query.token;
+  const animeId = Number(request.params.id);
+  const episodeNumber = Number(request.params.episode_number);
 
-  if (typeof filename !== 'string') {
-    sendBadRequest('Require filename query as string', response);
+  let episode: Episode | null = null;
+
+  try {
+    episode = await episodeService.getCachedEpisode(animeId, episodeNumber);
+  } catch (e) {
+    // not found
+  }
+
+  if (episode === null) {
+    response.status(StatusCodes.NOT_FOUND).send();
     return;
   }
 
-  if (typeof token !== 'string') {
-    sendBadRequest('Require token query as string', response);
-    return;
-  }
-
-  // todo
-  // call soap and check for token validity
-
-  // todo
-  // tambah viewer
-
-  const videoPath = `storage/${filename}`;
+  const videoPath = `storage/${episode.filename}`;
   const videoSize = fs.statSync(videoPath).size;
   const CHUNK_SIZE = 10 ** 6;
   const start = Number(range.replace(/\D/g, ''));
@@ -42,7 +46,47 @@ export const stream = (request: Request, response: Response) => {
     'Content-Type': 'video/mp4',
   };
 
+  // add viewer
+  if (start >= videoSize / 2) {
+    // todo replace user identifier with info taken from token
+    viewerService.addViewer(animeId, episodeNumber, '123');
+  }
+
   response.writeHead(206, headers);
   const videoStream = fs.createReadStream(videoPath, {start, end});
   videoStream.pipe(response);
-};
+}
+
+export async function streamThumbnail(
+  request: Request<{id: string; episode_number: string}>,
+  response: Response
+) {
+  const animeId = Number(request.params.id);
+  const episodeNumber = Number(request.params.episode_number);
+
+  let episode: Episode | null = null;
+
+  try {
+    episode = await episodeService.getCachedEpisode(animeId, episodeNumber);
+  } catch (e) {
+    // not found
+  }
+
+  if (episode === null) {
+    response.status(StatusCodes.NOT_FOUND).send();
+    return;
+  }
+
+  const filename = `${path.basename(episode.filename)}.jpg`;
+
+  const stream = fs.createReadStream(`storage/thumbnails/${filename}`);
+
+  stream.on('open', () => {
+    response.set('Content-Type', 'image/jpeg');
+    response.set('Cache-Control', 'max-age=43200');
+    stream.pipe(response);
+  });
+  stream.on('error', () => {
+    response.status(StatusCodes.NOT_FOUND).send();
+  });
+}

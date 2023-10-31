@@ -15,7 +15,7 @@ import {relations} from 'drizzle-orm';
 export const users = pgTable(
   'users',
   {
-    id: serial('id'),
+    id: serial('id').primaryKey(),
     username: varchar('username', {length: 255}).notNull(),
     name: varchar('name', {length: 255}).notNull(),
     password: varchar('password', {length: 255}).notNull(),
@@ -35,7 +35,7 @@ export const animeStatusEnum = pgEnum('AnimeStatus', [
 export const anime = pgTable(
   'anime',
   {
-    id: serial('id'),
+    id: serial('id').primaryKey(),
     title: varchar('title', {length: 255}).notNull(),
     globalIdentifier: varchar('global_identifier', {length: 255}).notNull(),
     status: animeStatusEnum('status'),
@@ -58,11 +58,14 @@ export const animeRelations = relations(anime, ({many}) => ({
 export const episodes = pgTable(
   'episodes',
   {
-    animeId: integer('anime_id').notNull(),
+    animeId: integer('anime_id')
+      .notNull()
+      .references(() => anime.id),
     title: varchar('title', {length: 255}).notNull(),
     episodeNumber: smallint('episodeNumber').notNull(),
     filename: varchar('filename', {length: 255}).notNull(),
     createdAt: timestamp('created_at', {withTimezone: true}).defaultNow(),
+    totalViewers: integer('total_viewers').notNull().default(0),
   },
   episodes => ({
     pk: primaryKey(episodes.animeId, episodes.episodeNumber),
@@ -75,3 +78,15 @@ export const episodesRelations = relations(episodes, ({one}) => ({
     references: [anime.id],
   }),
 }));
+
+export const episodeViewer = pgTable('episode_viewers', {
+  id: serial('id').primaryKey(),
+  animeId: integer('anime_id')
+    .notNull()
+    .references(() => anime.id),
+  episodeNumber: smallint('episodeNumber').notNull(),
+  userIdentifier: varchar('user_identifier', {length: 255}).notNull(),
+  createdAt: timestamp('created_at', {withTimezone: true}).defaultNow(),
+});
+
+export type Episode = typeof episodes.$inferSelect;

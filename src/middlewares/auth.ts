@@ -2,6 +2,13 @@ import {type NextFunction, type Request, type Response} from 'express';
 import {expressjwt} from 'express-jwt';
 import {getSecret, JWT_ALGORITHM} from '../config/jwt';
 
+// todo:
+// also check for consumer authorization (monolith)
+// todo (middleware auth tapi buat consumer di monolith)
+// gunakan memory cache di sini (cek user yg udh valid di cache kalo gaada baru
+// cek ke service soap)
+// call soap and check for token validity
+
 export const requireAuthenticated = (
   request: Request,
   response: Response,

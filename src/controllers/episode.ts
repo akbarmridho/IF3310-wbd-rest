@@ -9,6 +9,7 @@ import {
   sendOkWithPayload,
 } from '../utils/sendResponse';
 import {deleteEpisodeFile} from '../utils/file';
+import {episodeService} from '../services/EpisodeService';
 
 export async function createEpisodeHandler(
   request: Request<{id: string}>,
@@ -73,6 +74,9 @@ export async function updateEpisodeHandler(
       return;
     }
   }
+
+  // remove cache
+  episodeService.removeCachedEpisode(animeId, episodeNumber);
 
   const result = await db
     .update(episodes)
@@ -144,6 +148,8 @@ export async function deleteEpisodeHandler(
     // length of old should be 1 but whatever
     for (const each of old) {
       await deleteEpisodeFile(each.filename);
+      // remove from cache if exist
+      episodeService.removeCachedEpisode(each.animeId, each.episodeNumber);
     }
   }
 

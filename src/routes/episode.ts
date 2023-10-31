@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {stream} from '../controllers/streamer';
+import {stream, streamThumbnail} from '../controllers/streamer';
 import {
   createEpisodeHandler,
   deleteEpisodeHandler,
@@ -29,5 +29,8 @@ router.delete(':episode_number', deleteEpisodeHandler);
 
 // stream episode
 router.get(':episode_number/stream', stream);
+
+// stream thumbnail episode
+router.get(':episode_number/thumbnail', streamThumbnail);
 
 export default router;
