@@ -33,6 +33,7 @@ export const mergeChunks = async (filename: string, totalChunks: number) => {
 
 export const deleteEpisodeFile = async (filename: string) => {
   await fs.promises.unlink(`storage/${filename}`);
-  // todo
-  // also delete thumbnail here if exist
+
+  const imageName = `${path.basename(filename)}.jpg`;
+  await fs.promises.unlink(`storage/thumbnails/${imageName}`);
 };
