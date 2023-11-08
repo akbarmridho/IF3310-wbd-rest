@@ -1,6 +1,4 @@
 import {z} from 'zod';
-import {type JwtPayload} from 'jsonwebtoken';
-import {type Request as JWTRequest} from 'express-jwt';
 
 export const UsernameType = z
   .string()
@@ -26,15 +24,3 @@ export const ChangePasswordRequest = z.object({
   oldPassword: z.string(),
   newPassword: PasswordType,
 });
-
-export interface UserAuth extends JwtPayload {
-  id: number;
-}
-
-export interface AuthenticatedRequest extends JWTRequest<UserAuth> {
-  user?: {
-    id: number;
-    username: string;
-    name: string;
-  };
-}

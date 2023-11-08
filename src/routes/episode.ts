@@ -7,30 +7,57 @@ import {
   getEpisodeHandler,
   updateEpisodeHandler,
 } from '../controllers/episode';
+import {allowApiKey} from '../middlewares/apiKey';
+import {requireAuthenticated} from '../middlewares/auth';
+import {injectUser} from '../middlewares/injectUser';
 
 // route prefix
 // anime/:id/episodes
 const router = Router();
 
 // get all episodes for particular anime
-router.get('', getAllEpisodeHandler);
+router.get(
+  '',
+  [allowApiKey, requireAuthenticated, injectUser],
+  getAllEpisodeHandler
+);
 
 // new episode
-router.post('', createEpisodeHandler);
+router.post('', [requireAuthenticated, injectUser], createEpisodeHandler);
 
 // get specific episode
-router.get(':episode_number', getEpisodeHandler);
+router.get(
+  ':episode_number',
+  [allowApiKey, requireAuthenticated, injectUser],
+  getEpisodeHandler
+);
 
 // update episode
-router.put(':episode_number', updateEpisodeHandler);
+router.put(
+  ':episode_number',
+  [requireAuthenticated, injectUser],
+  updateEpisodeHandler
+);
 
 // delete episode
-router.delete(':episode_number', deleteEpisodeHandler);
+router.delete(
+  ':episode_number',
+  [requireAuthenticated, injectUser],
+  deleteEpisodeHandler
+);
 
 // stream episode
-router.get(':episode_number/stream', stream);
+router.get(
+  ':episode_number/stream',
+  [allowApiKey, requireAuthenticated, injectUser],
+  stream
+);
 
 // stream thumbnail episode
-router.get(':episode_number/thumbnail', streamThumbnail);
+router.get(
+  ':episode_number/thumbnail',
+  [allowApiKey, requireAuthenticated, injectUser],
+  streamThumbnail
+);
 
 export default router;

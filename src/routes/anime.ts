@@ -1,25 +1,26 @@
 import {Router} from 'express';
 import {sayHello} from '../controllers/hello';
+import {requireAuthenticated} from '../middlewares/auth';
+import {injectUser} from '../middlewares/injectUser';
+import {allowApiKey} from '../middlewares/apiKey';
 
 // route prefix
 // /anime
 const router = Router();
 
-// todo add require authenticated middleware and inject user middlware
-
 // get all anime
-router.get('', sayHello);
+router.get('', [requireAuthenticated, injectUser], sayHello);
 
 // new anime
-router.post('', sayHello);
+router.post('', [requireAuthenticated, injectUser], sayHello);
 
 // get specific anime
-router.get(':id', sayHello);
+router.get(':id', [allowApiKey, requireAuthenticated, injectUser], sayHello);
 
 // update anime
-router.put(':id', sayHello);
+router.put(':id', [requireAuthenticated, injectUser], sayHello);
 
 // delete anime
-router.delete(':id', sayHello);
+router.delete(':id', [requireAuthenticated, injectUser], sayHello);
 
 export default router;
