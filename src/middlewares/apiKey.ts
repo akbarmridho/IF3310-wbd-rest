@@ -24,6 +24,7 @@ export const allowApiKey = async (
 
     // skema panggil soap
     if (apiKey === API_KEY && subscriber !== null) {
+      request.apiUserId = userId;
       request.skipAuthMiddleware = true;
     }
   }

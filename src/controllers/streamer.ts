@@ -48,8 +48,12 @@ export async function stream(
 
   // add viewer
   if (start >= videoSize / 2) {
-    // todo replace user identifier with info taken from token
-    viewerService.addViewer(animeId, episodeNumber, '123');
+    const apiUserId = request.apiUserId;
+    if (apiUserId === undefined) {
+      throw new Error('Invalid streamer user id');
+    }
+
+    viewerService.addViewer(animeId, episodeNumber, apiUserId.toString());
   }
 
   response.writeHead(206, headers);
