@@ -1,8 +1,6 @@
 import {type NextFunction, Request, type Response} from 'express';
-import {db} from '../database/db';
-import {eq} from 'drizzle-orm';
-import {users} from '../database/schema';
 import {UnauthorizedError} from 'express-jwt';
+import {userService} from '../services/UserService';
 
 export const injectUser = async (
   request: Request,
@@ -16,15 +14,7 @@ export const injectUser = async (
       throw new Error('Missing auth in jwt.');
     }
 
-    // todo cache this
-    const user = await db.query.users.findFirst({
-      where: eq(users.id, auth.id),
-      columns: {
-        id: true,
-        username: true,
-        name: true,
-      },
-    });
+    const user = await userService.getCachedUser(auth.id);
 
     if (!user) {
       throw new UnauthorizedError(

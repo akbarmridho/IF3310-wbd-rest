@@ -22,8 +22,6 @@ export const requireAuthenticated = (
         ) {
           return req.headers.authorization.split(' ')[1];
           // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-        } else if (req.query?.token) {
-          return req.query.token as string;
         }
         return undefined;
       },

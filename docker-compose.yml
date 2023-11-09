@@ -7,14 +7,17 @@ services:
     hostname: listwibuku-rest-service
     volumes:
       - ./:/app
-      - /app/node_modules
     environment:
       DB_NAME: postgres
       DB_USERNAME: postgres
       DB_PASSWORD: pgpassword
-      DB_HOST: listwibuku-rest-database
+      DB_HOST: host.docker.internal
       DB_PORT: 5433
       PORT: 3000
+      SOAP_API_KEY: 1MHJG1a7gQZWjR1YShD2D5DUU2hQ7HLkUSnLbXULDw08iBHbLApMV4AZAR3V
+      SOAP_SERVICE_URL: http://host.docker.internal:3001/subscriberservice
+    depends_on:
+      - postgresql
   postgresql:
     image: postgres:14-alpine
     ports:

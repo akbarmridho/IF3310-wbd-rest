@@ -1,25 +1,29 @@
 import {type NextFunction, type Request, type Response} from 'express';
 import {API_KEY} from '../config/api';
+import {sendForbidden} from '../utils/sendResponse';
+import {subscriptionService} from '../services/SubscriptionService';
 
-export const allowApiKey = (
-  request: Request,
+export const allowApiKey = async (
+  request: Request<{}, {}, {}, {token?: string}>,
   response: Response,
   next: NextFunction
-): void => {
-  if (
-    request.headers.authorization !== undefined &&
-    request.headers.authorization.split(' ')[0] === 'Basic'
-  ) {
-    // todo:
-    // also check for consumer authorization (monolith)
-    // todo (middleware auth tapi buat consumer di monolith)
-    // gunakan memory cache di sini (cek user yg udh valid di cache kalo gaada baru
-    // cek ke service soap)
-    // call soap and check for token validity
-    const apiKey = request.headers.authorization.split(' ')[1];
+): Promise<void> => {
+  const token = request.query.token;
+  if (token) {
+    const values = Buffer.from(token, 'base64').toString().split(':');
+
+    if (values.length !== 2) {
+      sendForbidden(response);
+      return;
+    }
+
+    const userId = parseInt(values[0]);
+    const apiKey = values[1];
+
+    const subscriber = await subscriptionService.getSubscriber(userId);
 
     // skema panggil soap
-    if (apiKey === API_KEY) {
+    if (apiKey === API_KEY && subscriber !== null) {
       request.skipAuthMiddleware = true;
     }
   }
