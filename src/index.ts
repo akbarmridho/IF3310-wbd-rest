@@ -9,15 +9,12 @@ import {pageNotFound} from './controllers/pageNotFound';
 import animeRouter from './routes/anime';
 import episodeRouter from './routes/episode';
 import uploaderRouter from './routes/uploader';
-import {db, postgresClient} from './database/db';
-import {migrate} from 'drizzle-orm/node-postgres/migrator';
+import {db} from './database/db';
+import {migrate} from 'drizzle-orm/postgres-js/migrator';
 
 require('express-async-errors');
 
 async function main() {
-  // connect client
-  await postgresClient.connect();
-
   // migrate db
   await migrate(db, {
     migrationsFolder: 'drizzle',
