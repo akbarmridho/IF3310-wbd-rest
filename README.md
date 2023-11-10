@@ -10,4 +10,6 @@ You can look around to get an idea how to structure your project and, when done,
 
 ## Run Seeder
 
-`docker exec -it milestone-2-rest-rest-api-1 npm run seed`
+On host machine, run
+
+`npm run seed`
