@@ -17,45 +17,45 @@ const router = Router();
 
 // get all episodes for particular anime
 router.get(
-  '',
+  '/',
   [allowApiKey, requireAuthenticated, injectUser],
   getAllEpisodeHandler
 );
 
 // new episode
-router.post('', [requireAuthenticated, injectUser], createEpisodeHandler);
+router.post('/', [requireAuthenticated, injectUser], createEpisodeHandler);
 
 // get specific episode
 router.get(
-  ':episode_number',
+  '/:episode_number',
   [allowApiKey, requireAuthenticated, injectUser],
   getEpisodeHandler
 );
 
 // update episode
 router.put(
-  ':episode_number',
+  '/:episode_number',
   [requireAuthenticated, injectUser],
   updateEpisodeHandler
 );
 
 // delete episode
 router.delete(
-  ':episode_number',
+  '/:episode_number',
   [requireAuthenticated, injectUser],
   deleteEpisodeHandler
 );
 
 // stream episode
 router.get(
-  ':episode_number/stream',
+  '/:episode_number/stream',
   [allowApiKey, requireAuthenticated, injectUser],
   stream
 );
 
 // stream thumbnail episode
 router.get(
-  ':episode_number/thumbnail',
+  '/:episode_number/thumbnail',
   [allowApiKey, requireAuthenticated, injectUser],
   streamThumbnail
 );

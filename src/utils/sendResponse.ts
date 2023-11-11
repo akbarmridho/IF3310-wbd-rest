@@ -82,3 +82,9 @@ export const sendForbidden = (response: Response): void => {
     error: getReasonPhrase(StatusCodes.FORBIDDEN),
   });
 };
+
+export const sendNotFound = (response: Response): void => {
+  response.status(StatusCodes.NOT_FOUND).json({
+    error: getReasonPhrase(StatusCodes.NOT_FOUND),
+  });
+};

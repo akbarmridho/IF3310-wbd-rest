@@ -8,7 +8,17 @@ export const allowApiKey = async (
   response: Response,
   next: NextFunction
 ): Promise<void> => {
-  const token = request.query.token;
+  let token: string | undefined;
+
+  if (
+    request.headers.authorization !== undefined &&
+    request.headers.authorization.split(' ')[0] === 'Basic'
+  ) {
+    token = request.headers.authorization.split(' ')[1];
+  } else if (request.query.token) {
+    token = request.query.token;
+  }
+
   if (token) {
     const values = Buffer.from(token, 'base64').toString().split(':');
 

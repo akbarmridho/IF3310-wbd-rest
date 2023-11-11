@@ -48,8 +48,8 @@ async function main() {
     res.send('Hello World!');
   });
 
-  app.use('/anime', animeRouter);
-  app.use('/anime/:id/episodes', episodeRouter);
+  app.use('/anime/', animeRouter);
+  app.use('/anime/:id/episodes/', episodeRouter);
   app.use('/', uploaderRouter);
 
   // not found handler
