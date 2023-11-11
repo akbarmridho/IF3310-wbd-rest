@@ -16,6 +16,7 @@ services:
       PORT: 3000
       SOAP_API_KEY: 1MHJG1a7gQZWjR1YShD2D5DUU2hQ7HLkUSnLbXULDw08iBHbLApMV4AZAR3V
       SOAP_SERVICE_URL: http://host.docker.internal:3001/subscriberservice
+      APP_SECRET: xG1nAZGYTY13M3b8iAuJ3Oi1hU+LeVecWroLPukssWg=
     depends_on:
       - postgresql
   postgresql:
