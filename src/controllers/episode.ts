@@ -6,6 +6,7 @@ import {anime, episodes} from '../database/schema';
 import {
   sendBadRequest,
   sendCreated,
+  sendNotFound,
   sendOkWithPayload,
 } from '../utils/sendResponse';
 import {deleteEpisodeFile} from '../utils/file';
@@ -161,6 +162,11 @@ export async function getEpisodeHandler(
       eq(episodes.episodeNumber, episodeNumber)
     ),
   });
+
+  if (!result) {
+    sendNotFound(response);
+    return;
+  }
 
   sendOkWithPayload(result, response);
 }

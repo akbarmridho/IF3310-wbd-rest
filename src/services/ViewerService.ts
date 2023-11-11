@@ -13,14 +13,20 @@ export class ViewerService {
     // not the best way to count viewers but it works!
     setInterval(
       () => {
-        const copy = new Map(this.tempViewer);
-        this.tempViewer.clear();
-        void this.handleViewerSave(copy);
-        const counterCopy = new Map(this.tempCounter);
-        this.tempCounter.clear();
-        void this.handleCounterSave(counterCopy);
+        try {
+          const copy = new Map(this.tempViewer);
+          this.tempViewer.clear();
+          void this.handleViewerSave(copy);
+          const counterCopy = new Map(this.tempCounter);
+          this.tempCounter.clear();
+          void this.handleCounterSave(counterCopy);
+        } catch (e) {
+          if (e instanceof Error) {
+            console.log(e.stack);
+          }
+        }
       },
-      5 * 60 * 1000
+      5 * 30 * 1000
     ); // 5 minute
   }
 
@@ -37,7 +43,7 @@ export class ViewerService {
     }> = [];
 
     data.forEach((val, key) => {
-      const [animeId, episodeNumber, userIdentifier] = key.split('-');
+      const [animeId, episodeNumber, userIdentifier] = key.split(':');
 
       toInsert.push({
         animeId: animeId,
@@ -52,7 +58,7 @@ export class ViewerService {
 
   private async handleCounterSave(data: Map<string, number>) {
     for (const [key, val] of data.entries()) {
-      const [animeId, episodeNumber] = key.split('-');
+      const [animeId, episodeNumber] = key.split(':');
 
       await db
         .update(episodes)
@@ -75,12 +81,12 @@ export class ViewerService {
     episodeNumber: number,
     userIdentifier: string
   ) {
-    const value = `${animeId}-${episodeNumber}-${userIdentifier}`;
+    const value = `${animeId}:${episodeNumber}:${userIdentifier}`;
 
     if (!this.tempViewer.has(value)) {
       this.tempViewer.set(value, new Date());
 
-      const counterKey = `${animeId}-${episodeNumber}`;
+      const counterKey = `${animeId}:${episodeNumber}`;
       const initialCount = this.tempCounter.get(counterKey) ?? 0;
 
       this.tempCounter.set(counterKey, initialCount + 1);

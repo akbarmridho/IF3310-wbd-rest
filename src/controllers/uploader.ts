@@ -6,9 +6,6 @@ import {
 } from '../utils/sendResponse';
 import fs from 'fs';
 import {mergeChunks} from '../utils/file';
-import ffmpeg from 'fluent-ffmpeg';
-import ffmpegStatic from 'ffmpeg-static';
-import path from 'path';
 
 export const handleUpload = async (request: Request, response: Response) => {
   const chunk = request.file;
@@ -43,19 +40,6 @@ export const handleUpload = async (request: Request, response: Response) => {
     if (chunkNumber === totalChunks - 1) {
       // last chunk
       const uploadedFilename = await mergeChunks(filename, totalChunks);
-
-      if (ffmpegStatic === null) {
-        throw new Error('Ffmpeg path is null');
-      }
-
-      // generate thumbnail
-      ffmpeg(`storage/${uploadedFilename}`)
-        .setFfmpegPath(ffmpegStatic)
-        .screenshot({
-          timestamps: [0.0],
-          filename: `${path.basename(uploadedFilename)}.jpg`,
-          folder: 'storage/thumbnails',
-        });
 
       sendOkWithPayload(
         {

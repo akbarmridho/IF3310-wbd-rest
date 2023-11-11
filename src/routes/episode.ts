@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {stream, streamThumbnail} from '../controllers/streamer';
+import {stream} from '../controllers/streamer';
 import {
   createEpisodeHandler,
   deleteEpisodeHandler,
@@ -17,7 +17,7 @@ const router = Router();
 
 // get all episodes for particular anime
 router.get(
-  '/',
+  '/:id/episodes',
   [allowApiKey, requireAuthenticated, injectUser],
   getAllEpisodeHandler
 );
@@ -27,37 +27,30 @@ router.post('/', [requireAuthenticated, injectUser], createEpisodeHandler);
 
 // get specific episode
 router.get(
-  '/:episode_number',
+  '/:id/episodes/:episode_number',
   [allowApiKey, requireAuthenticated, injectUser],
   getEpisodeHandler
 );
 
 // update episode
 router.put(
-  '/:episode_number',
+  '/:id/episodes/:episode_number',
   [requireAuthenticated, injectUser],
   updateEpisodeHandler
 );
 
 // delete episode
 router.delete(
-  '/:episode_number',
+  '/:id/episodes/:episode_number',
   [requireAuthenticated, injectUser],
   deleteEpisodeHandler
 );
 
 // stream episode
 router.get(
-  '/:episode_number/stream',
+  '/:id/episodes/:episode_number/stream',
   [allowApiKey, requireAuthenticated, injectUser],
   stream
-);
-
-// stream thumbnail episode
-router.get(
-  '/:episode_number/thumbnail',
-  [allowApiKey, requireAuthenticated, injectUser],
-  streamThumbnail
 );
 
 export default router;

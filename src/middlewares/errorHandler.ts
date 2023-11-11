@@ -1,5 +1,5 @@
 import {type NextFunction, type Request, type Response} from 'express';
-import {StatusCodes, getReasonPhrase} from 'http-status-codes';
+import {getReasonPhrase, StatusCodes} from 'http-status-codes';
 
 export const errorHandler = (
   error: Error,
@@ -7,7 +7,7 @@ export const errorHandler = (
   response: Response,
   next: NextFunction
 ): void => {
-  console.log(error);
+  console.log(error.stack);
 
   response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
     error: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),

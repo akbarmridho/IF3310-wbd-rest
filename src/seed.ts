@@ -35,7 +35,7 @@ async function main() {
         id: 'frieren-s1',
         status: 'airing',
         totalEpisodes: 28,
-        airedEpisodes: 2,
+        airedEpisodes: 1,
         broadcastInformation: 'Lorem ipsum dos color sit amet',
       })
       .returning()
