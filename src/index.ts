@@ -8,6 +8,7 @@ import {pageNotFound} from './controllers/pageNotFound';
 import animeRouter from './routes/anime';
 import episodeRouter from './routes/episode';
 import uploaderRouter from './routes/uploader';
+import usersRouter from './routes/users';
 import {db} from './database/db';
 import {migrate} from 'drizzle-orm/postgres-js/migrator';
 import helmet from 'helmet';
@@ -54,8 +55,9 @@ async function main() {
     res.send('Hello World!');
   });
 
-  app.use('/anime/', animeRouter);
-  app.use('/anime/', episodeRouter);
+  app.use('/users', usersRouter);
+  app.use('/anime', animeRouter);
+  app.use('/anime/:id/episodes', episodeRouter);
   app.use('/', uploaderRouter);
 
   // not found handler
