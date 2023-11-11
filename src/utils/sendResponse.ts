@@ -78,23 +78,6 @@ export const sendOkWithMessage = (
   });
 };
 
-export const sendOkWithJwt = (
-  message: string,
-  token: string,
-  response: Response
-): void => {
-  response.status(StatusCodes.OK).cookie('access_token', token, {
-    httpOnly: true,
-    secure: true,
-    maxAge: JWT_EXPIRE_TIME * 1000,
-    sameSite: 'none'
-  }).json({
-    status: getReasonPhrase(StatusCodes.OK),
-    message: message,
-    token: token
-  })
-}
-
 export const sendForbidden = (response: Response): void => {
   response.status(StatusCodes.FORBIDDEN).json({
     error: getReasonPhrase(StatusCodes.FORBIDDEN),

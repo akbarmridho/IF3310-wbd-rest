@@ -1,7 +1,6 @@
 import {
   sendBadRequest,
   sendCreated,
-  sendOkWithJwt,
   sendOkWithMessage,
   sendOkWithPayload,
   sendServerError,
@@ -15,6 +14,7 @@ import {z} from 'zod';
 import {Encryption} from '../utils/encryption';
 import {signJwtToken} from '../utils/jwt';
 import {JWT_EXPIRE_TIME} from '../config/jwt';
+import {StatusCodes, getReasonPhrase} from 'http-status-codes';
 
 // register
 export async function registerHandler(
@@ -98,7 +98,16 @@ export async function loginHandler(
   
     // jwt
     const access_token = signJwtToken(user!.id, JWT_EXPIRE_TIME);
-    sendOkWithJwt('Login success', access_token, response);
+    response.status(StatusCodes.OK).cookie('access_token', access_token, {
+      httpOnly: true,
+      secure: true,
+      maxAge: JWT_EXPIRE_TIME * 1000,
+      sameSite: 'none'
+    }).json({
+      status: getReasonPhrase(StatusCodes.OK),
+      message: "Login success",
+      token: access_token
+    })
   
   } catch (error) {
     console.log('Invalid or incomplete credentials: ', error);
@@ -110,8 +119,14 @@ export async function logoutHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  // TODO: logout
-  sendOkWithMessage('Logout success', response);
+  try {
+    response.status(StatusCodes.OK).clearCookie('access_token').json({
+      message: 'Logout success'
+    })
+  } catch (error) {
+      console.log('Error on logout: ', error);
+      sendServerError('Error on logout', response);    
+  }
 }
 
 export async function changePasswordHandler(
