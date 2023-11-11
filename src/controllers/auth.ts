@@ -2,6 +2,7 @@ import {
   sendBadRequest,
   sendCreated,
   sendOkWithMessage,
+  sendOkWithPayload,
   sendServerError,
 } from '../utils/sendResponse';
 import {Request, Response} from 'express';
@@ -53,8 +54,8 @@ export async function registerHandler(
 
     
     sendCreated({
-      "id": result[0].id,
-      "username": result[0].username,
+      id: result[0].id,
+      username: result[0].username,
     }, response);
 
   } catch (error) {
@@ -112,9 +113,48 @@ export async function changePasswordHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  // TODO: changePassword
+  const username = request.body.username;
+  const oldPassword = request.body.oldPassword;
+  const newPassword = request.body.newPassword;
 
-  sendOkWithMessage('Change password success', response);
+  if (!username || !oldPassword || !newPassword) {
+    sendBadRequest('Incomplete credentials', response);
+    return;
+  }
+
+  // get user
+  const user = await db.query.users.findFirst({
+    where: eq(users.username, username),
+  });
+
+  if (user === null) {
+    sendBadRequest('User does not exist', response);
+    return;
+  }
+
+  if (!(await Encryption.compare(oldPassword, user!.password))) {
+    sendBadRequest('Invalid login credentials', response);
+    return;
+  }
+
+  try {
+    const validNewPassword = PasswordType.parse(newPassword);
+
+    const result = await db.update(users)
+    .set({ password: await Encryption.encrypt(validNewPassword) })
+    .where(eq(users.username, username)).returning({updatedId: users.id, updatedUsername: users.username});
+
+    sendOkWithPayload(result[0], response);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.log('Invalid new password: ', error);
+      sendBadRequest('Invalid new password', response);
+    } else {
+      console.log('Error updating user password: ', error);
+      sendServerError('Error updating user password', response);
+    }
+  }
+
 }
 
 // TODO: jwt
