@@ -9,7 +9,6 @@ export async function stream(
   request: Request<{id: string; episode_number: string}>,
   response: Response
 ) {
-  console.log('helow');
   const range = request.headers.range;
 
   if (!range) {
