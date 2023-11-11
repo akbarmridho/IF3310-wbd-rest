@@ -1,7 +1,7 @@
 import {z} from 'zod';
 
 export const CreateEpisodeRequest = z.object({
-  animeId: z.number().int(),
+  animeId: z.string().max(255),
   title: z.string().max(255),
   episodeNumber: z.number().int().gt(0),
   filename: z.string().max(255),

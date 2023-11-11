@@ -32,24 +32,15 @@ export const animeStatusEnum = pgEnum('AnimeStatus', [
   'aired',
 ]);
 
-export const anime = pgTable(
-  'anime',
-  {
-    id: serial('id').primaryKey(),
-    title: varchar('title', {length: 255}).notNull(),
-    globalIdentifier: varchar('global_identifier', {length: 255}).notNull(),
-    status: animeStatusEnum('status'),
-    totalEpisodes: smallint('totalEpisodes'),
-    airedEpisodes: smallint('airedEpisodes'),
-    broadcastInformation: text('broadcast_information'),
-    createdAt: timestamp('created_at', {withTimezone: true}).defaultNow(),
-  },
-  anime => ({
-    globalIdentifierIdx: unique('global_identifier_idx').on(
-      anime.globalIdentifier
-    ),
-  })
-);
+export const anime = pgTable('anime', {
+  id: varchar('id', {length: 255}).primaryKey(),
+  title: varchar('title', {length: 255}).notNull(),
+  status: animeStatusEnum('status'),
+  totalEpisodes: smallint('totalEpisodes'),
+  airedEpisodes: smallint('airedEpisodes'),
+  broadcastInformation: text('broadcast_information'),
+  createdAt: timestamp('created_at', {withTimezone: true}).defaultNow(),
+});
 
 export const animeRelations = relations(anime, ({many}) => ({
   episodes: many(episodes),
@@ -58,7 +49,7 @@ export const animeRelations = relations(anime, ({many}) => ({
 export const episodes = pgTable(
   'episodes',
   {
-    animeId: integer('anime_id')
+    animeId: varchar('anime_id', {length: 255})
       .notNull()
       .references(() => anime.id),
     title: varchar('title', {length: 255}).notNull(),
@@ -81,7 +72,7 @@ export const episodesRelations = relations(episodes, ({one}) => ({
 
 export const episodeViewer = pgTable('episode_viewers', {
   id: serial('id').primaryKey(),
-  animeId: integer('anime_id')
+  animeId: varchar('anime_id', {length: 255})
     .notNull()
     .references(() => anime.id),
   episodeNumber: smallint('episodeNumber').notNull(),

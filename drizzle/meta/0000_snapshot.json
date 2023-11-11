@@ -1,8 +1,8 @@
 {
+  "id": "73208a37-0075-4380-8f56-5a396d5cddc0",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
-  "id": "288eb979-381e-48c3-96d0-b780e1eb8d11",
-  "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "anime": {
       "name": "anime",
@@ -10,18 +10,12 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
-          "primaryKey": false,
+          "type": "varchar(255)",
+          "primaryKey": true,
           "notNull": true
         },
         "title": {
           "name": "title",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "global_identifier": {
-          "name": "global_identifier",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
@@ -49,34 +43,82 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "global_identifier_idx": {
-          "name": "global_identifier_idx",
-          "nullsNotDistinct": false,
-          "columns": [
-            "global_identifier"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
-    "episodes": {
-      "name": "episodes",
+    "episode_viewers": {
+      "name": "episode_viewers",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
           "type": "serial",
-          "primaryKey": false,
+          "primaryKey": true,
           "notNull": true
         },
         "anime_id": {
           "name": "anime_id",
-          "type": "integer",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "episodeNumber": {
+          "name": "episodeNumber",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_identifier": {
+          "name": "user_identifier",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "episode_viewers_anime_id_anime_id_fk": {
+          "name": "episode_viewers_anime_id_anime_id_fk",
+          "tableFrom": "episode_viewers",
+          "tableTo": "anime",
+          "columnsFrom": [
+            "anime_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "episodes": {
+      "name": "episodes",
+      "schema": "",
+      "columns": {
+        "anime_id": {
+          "name": "anime_id",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
@@ -97,11 +139,47 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "total_viewers": {
+          "name": "total_viewers",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
         }
       },
       "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
+      "foreignKeys": {
+        "episodes_anime_id_anime_id_fk": {
+          "name": "episodes_anime_id_anime_id_fk",
+          "tableFrom": "episodes",
+          "tableTo": "anime",
+          "columnsFrom": [
+            "anime_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "episodes_anime_id_episodeNumber": {
+          "name": "episodes_anime_id_episodeNumber",
+          "columns": [
+            "anime_id",
+            "episodeNumber"
+          ]
+        }
+      },
       "uniqueConstraints": {}
     },
     "users": {
@@ -111,7 +189,7 @@
         "id": {
           "name": "id",
           "type": "serial",
-          "primaryKey": false,
+          "primaryKey": true,
           "notNull": true
         },
         "username": {
@@ -131,6 +209,13 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {},

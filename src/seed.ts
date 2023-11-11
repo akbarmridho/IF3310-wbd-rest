@@ -32,7 +32,7 @@ async function main() {
       .insert(anime)
       .values({
         title: 'Sousou no Frieren',
-        globalIdentifier: 'frieren-s1',
+        id: 'frieren-s1',
         status: 'airing',
         totalEpisodes: 28,
         airedEpisodes: 2,

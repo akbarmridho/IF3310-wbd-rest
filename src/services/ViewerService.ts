@@ -30,7 +30,7 @@ export class ViewerService {
     }
 
     const toInsert: Array<{
-      animeId: number;
+      animeId: string;
       episodeNumber: number;
       userIdentifier: string;
       createdAt: Date;
@@ -40,7 +40,7 @@ export class ViewerService {
       const [animeId, episodeNumber, userIdentifier] = key.split('-');
 
       toInsert.push({
-        animeId: Number(animeId),
+        animeId: animeId,
         episodeNumber: Number(episodeNumber),
         userIdentifier,
         createdAt: val,
@@ -63,7 +63,7 @@ export class ViewerService {
         })
         .where(
           and(
-            eq(episodes.animeId, Number(animeId)),
+            eq(episodes.animeId, animeId),
             eq(episodes.episodeNumber, Number(episodeNumber))
           )
         );
@@ -71,7 +71,7 @@ export class ViewerService {
   }
 
   public addViewer(
-    animeId: number,
+    animeId: string,
     episodeNumber: number,
     userIdentifier: string
   ) {

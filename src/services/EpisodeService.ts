@@ -8,7 +8,7 @@ class EpisodeNotFoundException extends Error {}
 class EpisodeService {
   private readonly EPISODE_NAMESPACE = 'episodes:';
 
-  public async getCachedEpisode(animeId: number, episodeNumber: number) {
+  public async getCachedEpisode(animeId: string, episodeNumber: number) {
     const key = `${this.EPISODE_NAMESPACE}${animeId}-${episodeNumber}`;
 
     const cached = cacheService.get<Episode>(key);
@@ -33,7 +33,7 @@ class EpisodeService {
     return episode;
   }
 
-  public removeCachedEpisode(animeId: number, episodeNumber: number) {
+  public removeCachedEpisode(animeId: string, episodeNumber: number) {
     const key = `${this.EPISODE_NAMESPACE}${animeId}-${episodeNumber}`;
     cacheService.del(key);
   }

@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1697902305956,
-      "tag": "0000_clammy_slayback",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1697982594575,
-      "tag": "0001_fast_mindworm",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1698676250245,
-      "tag": "0002_lucky_sway",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1698763218438,
-      "tag": "0003_previous_zarek",
+      "when": 1699684235153,
+      "tag": "0000_spicy_marvex",
       "breakpoints": true
     }
   ]

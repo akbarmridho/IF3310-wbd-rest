@@ -17,7 +17,7 @@ export async function stream(
     return;
   }
 
-  const animeId = Number(request.params.id);
+  const animeId = request.params.id;
   const episodeNumber = Number(request.params.episode_number);
 
   let episode: Episode | null = null;
@@ -65,7 +65,7 @@ export async function streamThumbnail(
   request: Request<{id: string; episode_number: string}>,
   response: Response
 ) {
-  const animeId = Number(request.params.id);
+  const animeId = request.params.id;
   const episodeNumber = Number(request.params.episode_number);
 
   let episode: Episode | null = null;

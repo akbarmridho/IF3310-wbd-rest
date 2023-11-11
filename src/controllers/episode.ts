@@ -16,7 +16,7 @@ export async function createEpisodeHandler(
   response: Response
 ) {
   const data = CreateEpisodeRequest.parse(request.body);
-  const animeId = Number(request.params.id);
+  const animeId = request.params.id;
 
   // check for duplicate episode
   const episode = await db.query.episodes.findFirst({
@@ -41,7 +41,7 @@ export async function updateEpisodeHandler(
   response: Response
 ) {
   const data = UpdateEpisodeRequest.parse(request.body);
-  const animeId = Number(request.params.id);
+  const animeId = request.params.id;
   const episodeNumber = Number(request.params.episode_number);
 
   // check for episode existence
@@ -100,7 +100,7 @@ export async function getAllEpisodeHandler(
   request: Request<{id: string}>,
   response: Response
 ) {
-  const animeId = Number(request.params.id);
+  const animeId = request.params.id;
 
   const result = await db.query.episodes.findMany({
     where: eq(episodes.animeId, animeId),
@@ -114,7 +114,7 @@ export async function getEpisodeHandler(
   request: Request<{id: string; episode_number: string}>,
   response: Response
 ) {
-  const animeId = Number(request.params.id);
+  const animeId = request.params.id;
   const episodeNumber = Number(request.params.episode_number);
 
   const result = await db.query.episodes.findFirst({
@@ -131,7 +131,7 @@ export async function deleteEpisodeHandler(
   request: Request<{id: string; episode_number: string}>,
   response: Response
 ) {
-  const animeId = Number(request.params.id);
+  const animeId = request.params.id;
   const episodeNumber = Number(request.params.episode_number);
 
   const old = await db
