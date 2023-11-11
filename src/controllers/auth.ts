@@ -1,17 +1,20 @@
 import {
   sendBadRequest,
   sendCreated,
+  sendOkWithJwt,
   sendOkWithMessage,
   sendOkWithPayload,
   sendServerError,
 } from '../utils/sendResponse';
 import {Request, Response} from 'express';
 import {db} from '../database/db';
-import {PasswordType, UsernameType} from '../types/auth';
+import {ChangePasswordRequest, LoginRequest, PasswordType, UsernameType} from '../types/auth';
 import {eq} from 'drizzle-orm';
 import {users} from '../database/schema';
 import {z} from 'zod';
 import {Encryption} from '../utils/encryption';
+import {signJwtToken} from '../utils/jwt';
+import {JWT_EXPIRE_TIME} from '../config/jwt';
 
 // register
 export async function registerHandler(
@@ -73,32 +76,34 @@ export async function loginHandler(
   request: Request,
   response: Response
 ): Promise<void> {
-  const username = request.body.username;
-  const password = request.body.password;
-
-  if (!username || !password) {
-    sendBadRequest('Incomplete login credentials', response);
-    return;
+  try {
+    const data = LoginRequest.parse(request.body);
+      
+    // get user
+    const user = await db.query.users.findFirst({
+      where: eq(users.username, data.username),
+    });
+  
+    // user not exist in db
+    if (user === null) {
+      sendBadRequest('User does not exist', response);
+      return;
+    }
+  
+    // check password
+    if (!(await Encryption.compare(data.password, user!.password))) {
+      sendBadRequest('Invalid login credentials', response);
+      return;
+    }
+  
+    // jwt
+    const access_token = signJwtToken(user!.id, JWT_EXPIRE_TIME);
+    sendOkWithJwt('Login success', access_token, response);
+  
+  } catch (error) {
+    console.log('Invalid or incomplete credentials: ', error);
+    sendBadRequest('Invalid or incomplete credentials', response);
   }
-
-  // get user
-  const user = await db.query.users.findFirst({
-    where: eq(users.username, username),
-  });
-
-  if (user === null) {
-    sendBadRequest('User does not exist', response);
-    return;
-  }
-
-  if (!(await Encryption.compare(password, user!.password))) {
-    sendBadRequest('Invalid login credentials', response);
-    return;
-  }
-
-  // TODO: jwt
-
-  sendOkWithMessage('Login success', response);
 }
 
 export async function logoutHandler(
@@ -112,43 +117,45 @@ export async function logoutHandler(
 export async function changePasswordHandler(
   request: Request,
   response: Response
-): Promise<void> {
-  const username = request.body.username;
-  const oldPassword = request.body.oldPassword;
-  const newPassword = request.body.newPassword;
-
-  if (!username || !oldPassword || !newPassword) {
-    sendBadRequest('Incomplete credentials', response);
-    return;
-  }
-
-  // get user
-  const user = await db.query.users.findFirst({
-    where: eq(users.username, username),
-  });
-
-  if (user === null) {
-    sendBadRequest('User does not exist', response);
-    return;
-  }
-
-  if (!(await Encryption.compare(oldPassword, user!.password))) {
-    sendBadRequest('Invalid login credentials', response);
-    return;
-  }
-
+  ): Promise<void> {
   try {
-    const validNewPassword = PasswordType.parse(newPassword);
+    const data = ChangePasswordRequest.parse(request.body);
+    const uid = request.user?.id;
+    const oldPassword = data.oldPassword;
+    const newPassword = data.newPassword;
 
+    if (!uid || !oldPassword || !newPassword) {
+      sendBadRequest('Incomplete credentials', response);
+      return;
+    }
+
+    // get user from db
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, uid),
+    });
+
+    // user not exist in db
+    if (user === null) {
+      sendBadRequest('User does not exist', response);
+      return;
+    }
+
+    // oldPassword not equal
+    if (!(await Encryption.compare(oldPassword, user!.password))) {
+      sendBadRequest('Invalid old password', response);
+      return;
+    }
+
+    // update password
     const result = await db.update(users)
-    .set({ password: await Encryption.encrypt(validNewPassword) })
-    .where(eq(users.username, username)).returning({updatedId: users.id, updatedUsername: users.username});
+    .set({ password: await Encryption.encrypt(newPassword) })
+    .where(eq(users.id, uid)).returning({updatedId: users.id, updatedUsername: users.username});
 
     sendOkWithPayload(result[0], response);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log('Invalid new password: ', error);
-      sendBadRequest('Invalid new password', response);
+      console.log('Invalid passwords: ', error);
+      sendBadRequest('Invalid passwords', response);
     } else {
       console.log('Error updating user password: ', error);
       sendServerError('Error updating user password', response);
@@ -156,5 +163,3 @@ export async function changePasswordHandler(
   }
 
 }
-
-// TODO: jwt
