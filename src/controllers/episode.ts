@@ -1,8 +1,8 @@
 import {Request, Response} from 'express';
 import {CreateEpisodeRequest, UpdateEpisodeRequest} from '../types/episode';
 import {db} from '../database/db';
-import {and, asc, eq} from 'drizzle-orm';
-import {episodes} from '../database/schema';
+import {and, asc, eq, sql} from 'drizzle-orm';
+import {anime, episodes} from '../database/schema';
 import {
   sendBadRequest,
   sendCreated,
@@ -10,6 +10,38 @@ import {
 } from '../utils/sendResponse';
 import {deleteEpisodeFile} from '../utils/file';
 import {episodeService} from '../services/EpisodeService';
+
+async function getLargestEpisodeNumber(
+  animeId: string
+): Promise<number | null> {
+  const maxNumber = await db
+    .select({
+      episodeNumber: sql<number>`max(
+      ${episodes.episodeNumber}
+      )`,
+    })
+    .from(episodes)
+    .where(and(eq(episodes.animeId, animeId)))
+    .limit(1);
+
+  if (maxNumber.length === 0) {
+    return null;
+  }
+
+  return maxNumber[0].episodeNumber;
+}
+
+async function refreshAiredEpisodes(animeId: string) {
+  // update aired episodes
+  const largestEpisodeNumber = await getLargestEpisodeNumber(animeId);
+
+  await db
+    .update(anime)
+    .set({
+      airedEpisodes: largestEpisodeNumber,
+    })
+    .where(eq(anime.id, animeId));
+}
 
 export async function createEpisodeHandler(
   request: Request<{id: string}>,
@@ -25,6 +57,9 @@ export async function createEpisodeHandler(
       eq(episodes.episodeNumber, data.episodeNumber)
     ),
   });
+
+  // update aired episodes
+  await refreshAiredEpisodes(animeId);
 
   if (episode) {
     sendBadRequest('Episode with given number is already exist', response);
@@ -93,6 +128,9 @@ export async function updateEpisodeHandler(
     await deleteEpisodeFile(oldEpisode.filename);
   }
 
+  // update aired episodes
+  await refreshAiredEpisodes(animeId);
+
   sendOkWithPayload(result[0], response);
 }
 
@@ -152,6 +190,9 @@ export async function deleteEpisodeHandler(
       episodeService.removeCachedEpisode(each.animeId, each.episodeNumber);
     }
   }
+
+  // update aired episodes
+  await refreshAiredEpisodes(animeId);
 
   sendOkWithPayload('Deleted', response);
 }
