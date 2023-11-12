@@ -27,6 +27,6 @@ export const ChangePasswordRequest = z.object({
 
 export const RegisterRequest = z.object({
   username: UsernameType,
-  name: z.string(),
+  name: z.string().min(2).max(127),
   password: PasswordType,
 });
