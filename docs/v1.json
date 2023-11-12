@@ -85,6 +85,9 @@
             "type": "string",
             "description": "Should be unique. Only contains lowercase, numbers, and symbol . and _"
           },
+          "name": {
+            "type": "string"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -303,6 +306,35 @@
                       "$ref": "#/components/schemas/ValidationError"
                     }
                   ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile": {
+      "get": {
+        "summary": "Get profile",
+        "operationId": "profile",
+        "tags": [
+          "profile"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/UserInstance"
+                    }
+                  }
                 }
               }
             }

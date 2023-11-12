@@ -2,6 +2,7 @@ import {
   sendBadRequest,
   sendCreated,
   sendOkWithMessage,
+  sendOkWithPayload,
 } from '../utils/sendResponse';
 import {Request, Response} from 'express';
 import {db} from '../database/db';
@@ -127,4 +128,11 @@ export async function changePasswordHandler(
     .where(eq(users.id, user.id));
 
   sendOkWithMessage('Change password success', response);
+}
+
+export async function profileHandler(
+  request: Request,
+  response: Response
+): Promise<void> {
+  sendOkWithPayload(request.user!, response);
 }
