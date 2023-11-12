@@ -1,10 +1,9 @@
-import * as bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 
 export class Encryption {
   static async encrypt(password: string) {
     const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
-    return hash;
+    return await bcrypt.hash(password, salt);
   }
 
   static async compare(password: string, hash: string) {

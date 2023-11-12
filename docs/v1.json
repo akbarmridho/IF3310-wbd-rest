@@ -93,11 +93,6 @@
       }
     },
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      },
       "cookieAuth": {
         "type": "apiKey",
         "in": "cookie",
@@ -239,7 +234,7 @@
         }
       }
     },
-    "/profile/logout": {
+    "/logout": {
       "post": {
         "summary": "Logout",
         "operationId": "logout",
@@ -254,6 +249,63 @@
         "responses": {
           "200": {
             "description": "Cookie was cleared"
+          }
+        }
+      }
+    },
+    "/profile/password": {
+      "put": {
+        "summary": "Change user password",
+        "operationId": "changePassword",
+        "tags": [
+          "profile"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "oldPassword",
+                  "newPassword"
+                ],
+                "properties": {
+                  "oldPassword": {
+                    "type": "string",
+                    "example": "password123",
+                    "description": "Minimum 8 chars"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "example": "password123",
+                    "description": "Minimum 8 chars"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Possible error old password does not match",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ValidationSingleError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ValidationError"
+                    }
+                  ]
+                }
+              }
+            }
           }
         }
       }
