@@ -12,6 +12,7 @@ import usersRouter from './routes/users';
 import {db} from './database/db';
 import {migrate} from 'drizzle-orm/postgres-js/migrator';
 import helmet from 'helmet';
+import cors from 'cors';
 
 require('express-async-errors');
 
@@ -25,7 +26,6 @@ async function main() {
   const port: number =
     process.env.PORT === undefined ? 3000 : parseInt(process.env.PORT);
 
-  app.disable('x-powered-by');
   app.use(
     helmet({
       crossOriginResourcePolicy: {
@@ -33,6 +33,17 @@ async function main() {
       },
     })
   );
+
+  app.use(
+    // fuck cors
+    cors({
+      credentials: true,
+      origin(_, callback) {
+        callback(null, true);
+      },
+    })
+  );
+
   app.use(express.json());
   app.use(express.urlencoded({extended: true}));
   app.use(cookieParser());
@@ -55,7 +66,7 @@ async function main() {
     res.send('Hello World!');
   });
 
-  app.use('/users', usersRouter);
+  app.use('/', usersRouter);
   app.use('/anime', animeRouter);
   app.use('/anime/:id/episodes', episodeRouter);
   app.use('/', uploaderRouter);
