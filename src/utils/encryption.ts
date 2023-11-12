@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 
 export class Encryption {
   static async encrypt(password: string) {
