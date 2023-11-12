@@ -1,6 +1,6 @@
 import * as schema from './database/schema';
 import {anime, episodes, users} from './database/schema';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import postgres from 'postgres';
 import {drizzle} from 'drizzle-orm/postgres-js';
 

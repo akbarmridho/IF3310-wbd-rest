@@ -1,21 +1,13 @@
-import {
-  sendBadRequest,
-  sendCreated,
-  sendOkWithMessage,
-} from '../utils/sendResponse';
-import {Request, Response} from 'express';
-import {db} from '../database/db';
-import {
-  ChangePasswordRequest,
-  LoginRequest,
-  RegisterRequest,
-} from '../types/auth';
-import {eq} from 'drizzle-orm';
-import {users} from '../database/schema';
-import {Encryption} from '../utils/encryption';
-import {signJwtToken} from '../utils/jwt';
-import {JWT_EXPIRE_TIME} from '../config/jwt';
-import {getReasonPhrase, StatusCodes} from 'http-status-codes';
+import { sendBadRequest, sendCreated, sendOkWithMessage } from "../utils/sendResponse";
+import { Request, Response } from "express";
+import { db } from "../database/db";
+import { ChangePasswordRequest, LoginRequest, RegisterRequest } from "../types/auth";
+import { eq } from "drizzle-orm";
+import { users } from "../database/schema";
+import { Encryption } from "../utils/encryption";
+import { signJwtToken } from "../utils/jwt";
+import { JWT_EXPIRE_TIME } from "../config/jwt";
+import { getReasonPhrase, StatusCodes } from "http-status-codes";
 
 // register
 export async function registerHandler(
@@ -62,13 +54,13 @@ export async function loginHandler(
 
   // user not exist in db
   if (!user) {
-    sendBadRequest('Invalid login credentials', response);
+    sendBadRequest('Username or password is incorrect', response);
     return;
   }
 
   // check password
   if (!(await Encryption.compare(data.password, user.password))) {
-    sendBadRequest('Invalid login credentials', response);
+    sendBadRequest('Username or password is incorrect', response);
     return;
   }
 
