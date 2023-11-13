@@ -59,7 +59,7 @@ export const episodes = pgTable(
     totalViewers: integer('total_viewers').notNull().default(0),
   },
   episodes => ({
-    pk: primaryKey(episodes.animeId, episodes.episodeNumber),
+    pk: primaryKey({columns: [episodes.animeId, episodes.episodeNumber]}),
   })
 );
 
