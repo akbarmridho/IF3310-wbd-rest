@@ -7,6 +7,28 @@ ListWibuKu Rest is a site that provide anime streaming service.
 1. Akbar Maulana Ridho, 13521093
 2. Eugene Yap Jin Quan, 13521074
 
+## Database Schema
+
+![Schema](./.readme/schema.png)
+
+## Endpoint Api
+
+This service on default run on `http://localhost:3000`
+
+## Endpoint Documentation
+
+The majority of the api documentation is written in OpenAPI format inside docs folder. However, there are two endpoint
+that are not written there
+
+### Endpoint GET `/anime/:id/episodes/:episode_number/stream`
+
+Receive access token cookie or basic authentication. This will return mp4 vidoe stream.
+
+### Endpoint POST `/file`
+
+Receive chunked file in binary data with additional chunkNumber and totalChunks value. After successful upload on latest
+chunk, this will return uploaded filename.
+
 ## Requirement
 
 1. Docker Installed
