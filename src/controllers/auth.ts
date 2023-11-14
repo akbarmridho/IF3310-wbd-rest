@@ -36,6 +36,7 @@ export async function registerHandler(
   }
 
   // insert new user to db
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const {password, ...payload} = (
     await db
       .insert(users)

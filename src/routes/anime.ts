@@ -1,19 +1,24 @@
 import {Router} from 'express';
-import {sayHello} from '../controllers/hello';
 import {requireAuthenticated} from '../middlewares/auth';
 import {injectUser} from '../middlewares/injectUser';
 import {allowApiKey} from '../middlewares/apiKey';
-import {getAnimeHandler} from '../controllers/anime';
+import {
+  createAnimeHandler,
+  deleteAnimeHandler,
+  getAllAnimeHandler,
+  getAnimeHandler,
+  updateAnimeHandler,
+} from '../controllers/anime';
 
 // route prefix
 // /anime
 const router = Router();
 
 // get all anime
-router.get('/', [requireAuthenticated, injectUser], sayHello);
+router.get('/', [requireAuthenticated, injectUser], getAllAnimeHandler);
 
 // new anime
-router.post('/', [requireAuthenticated, injectUser], sayHello);
+router.post('/', [requireAuthenticated, injectUser], createAnimeHandler);
 
 // get specific anime
 router.get(
@@ -23,9 +28,9 @@ router.get(
 );
 
 // update anime
-router.put('/:id', [requireAuthenticated, injectUser], sayHello);
+router.put('/:id', [requireAuthenticated, injectUser], updateAnimeHandler);
 
 // delete anime
-router.delete('/:id', [requireAuthenticated, injectUser], sayHello);
+router.delete('/:id', [requireAuthenticated, injectUser], deleteAnimeHandler);
 
 export default router;
