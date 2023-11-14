@@ -35,7 +35,7 @@ export const animeStatusEnum = pgEnum('AnimeStatus', [
 export const anime = pgTable('anime', {
   id: varchar('id', {length: 255}).primaryKey(),
   title: varchar('title', {length: 255}).notNull(),
-  status: animeStatusEnum('status'),
+  status: animeStatusEnum('status').notNull(),
   totalEpisodes: smallint('totalEpisodes'),
   airedEpisodes: smallint('airedEpisodes'),
   broadcastInformation: text('broadcast_information'),
