@@ -33,7 +33,11 @@ export const allowApiKey = async (
     const subscriber = await subscriptionService.getSubscriber(userId);
 
     // skema panggil soap
-    if (apiKey === API_KEY && subscriber !== null) {
+    if (
+      apiKey === API_KEY &&
+      subscriber !== null &&
+      Date.now() < Date.parse(subscriber.subscriptionEndTime)
+    ) {
       request.apiUserId = userId;
       request.skipAuthMiddleware = true;
     }

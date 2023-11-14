@@ -3,10 +3,9 @@ import {cacheService} from '../database/cache';
 
 interface Subscriber {
   email: string;
-  status: string;
   subscriptionEndTime: string;
   subscriptionStartTime: string;
-  userId: string;
+  id: string;
 }
 
 class SubscriptionService {
@@ -26,14 +25,14 @@ class SubscriptionService {
   public async getSubscriber(id: number): Promise<Subscriber | null> {
     const key = `${this.SUBSCRIBER_NAMESPACE}${id}`;
 
-    const cached = cacheService.get<Subscriber>(key);
+    const cached = cacheService.get<Subscriber | null>(key);
 
-    if (cached) {
+    if (cached !== undefined) {
       return cached;
     }
 
     const result = (await this.client.invoke('getSubscriber', {
-      userId: id.toString(),
+      arg0: id.toString(),
     })) as Subscriber | null;
 
     cacheService.set<Subscriber | null>(key, result, 60 * 10);

@@ -68,7 +68,8 @@ async function main() {
 
   app.use('/', usersRouter);
   app.use('/anime', animeRouter);
-  app.use('/anime/:id/episodes', episodeRouter);
+  // jgn diganti prefixnya
+  app.use('/anime', episodeRouter);
   app.use('/', uploaderRouter);
 
   // not found handler
