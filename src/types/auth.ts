@@ -8,12 +8,9 @@ export const UsernameType = z
   .max(20)
   .regex(
     /^(?=[a-zA-Z0-9._]{2,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/,
-    'Username hanya boleh memiliki huruf, angka, simbol _ dan .'
+    'Username only could have letter, number, symbol _ and .'
   );
-export const PasswordType = z
-  .string()
-  .min(8, 'Password minimal 8 karakter')
-  .max(127, 'Password maksimal 127 karakter');
+export const PasswordType = z.string().min(8).max(127);
 
 export const LoginRequest = z.object({
   username: z.string().toLowerCase().trim(),
