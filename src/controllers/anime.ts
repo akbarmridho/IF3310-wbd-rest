@@ -1,7 +1,6 @@
 import {Request, Response} from 'express';
 import {db} from '../database/db';
-import {eq} from 'drizzle-orm';
-import {anime} from '../database/schema';
+import {anime, episodes} from '../database/schema';
 import {
   sendBadRequest,
   sendCreated,
@@ -9,6 +8,7 @@ import {
   sendOkWithPayload,
 } from '../utils/sendResponse';
 import {CreateAnimeRequest, UpdateAnimeRequest} from '../types/anime';
+import {and, asc, eq, sql} from 'drizzle-orm';
 
 export async function getAnimeHandler(
   request: Request<{id: string}>,
@@ -76,6 +76,22 @@ export async function deleteAnimeHandler(
   response: Response
 ) {
   const animeId = request.params.id;
+
+  // check remaining episodes
+  const episodeCount = await db
+    .select({
+      episodeCount: sql<number>`count(
+      ${episodes.episodeNumber}
+      )`,
+    })
+    .from(episodes)
+    .where(eq(episodes.animeId, animeId))
+    .limit(1);
+
+  if (Number(episodeCount[0].episodeCount) !== 0) {
+    sendBadRequest('Please delete remaining episodes first', response);
+    return;
+  }
 
   // delete
   const deletedRow = await db
