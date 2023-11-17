@@ -23,7 +23,11 @@ router.get(
 );
 
 // new episode
-router.post('/', [requireAuthenticated, injectUser], createEpisodeHandler);
+router.post(
+  '/:id/episodes',
+  [requireAuthenticated, injectUser],
+  createEpisodeHandler
+);
 
 // get specific episode
 router.get(

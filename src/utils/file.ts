@@ -12,7 +12,7 @@ export const mergeChunks = async (filename: string, totalChunks: number) => {
 
   const extension = path.extname(filename);
   const randomizedFilename =
-    crypto.randomBytes(16).toString('hex') + `.${extension}`;
+    crypto.randomBytes(16).toString('hex') + `${extension}`;
 
   const writeStream = fs.createWriteStream(
     `${mergedFilePath}/${randomizedFilename}`

@@ -23,7 +23,7 @@ export const handleUpload = async (request: Request, response: Response) => {
     return;
   }
 
-  const filename = chunk.filename;
+  const filename = request.body.originalname as string;
 
   const chunkDir = 'storage/chunks';
 

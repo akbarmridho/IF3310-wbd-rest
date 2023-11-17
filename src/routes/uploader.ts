@@ -10,7 +10,7 @@ const upload = multer({storage: storage});
 const router = Router();
 
 router.post(
-  'file',
+  '/file',
   [requireAuthenticated, injectUser, upload.single('file')],
   handleUpload
 );
